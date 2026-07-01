@@ -1,4 +1,4 @@
-import Newton.Reverse
+import Newton.reverse
 import Mathlib.Analysis.Calculus.LocalExtr.Polynomial
 
 open Polynomial
