@@ -1,5 +1,6 @@
 import Newton.Reverse
 import Mathlib.Analysis.Calculus.LocalExtr.Polynomial
+import Mathlib.Tactic.Omega
 
 open Polynomial
 
@@ -179,3 +180,37 @@ lemma newton_ineq {i n: ℕ} (hi: i+2 ≤ n) {x : Multiset ℝ} (hx: Multiset.ca
   convert newton_ineq' i n hx
   . zify [hi'']
   zify [hi']; ring
+
+/-- Newton's inequalities on the first three elementary symmetric means. -/
+lemma newton_ineq_012 {n : ℕ} (hn : 2 ≤ n) {x : Multiset ℝ} (hx : Multiset.card x = n) :
+    (esymm x 0 / Nat.choose n 0) * (esymm x 2 / Nat.choose n 2) ≤ (esymm x 1 / Nat.choose n 1) ^ 2 :=
+  newton_ineq (i := 0) (by linarith) hx
+
+/-- Newton's inequalities on elementary symmetric means of indices 1, 2, 3. -/
+lemma newton_ineq_123 {n : ℕ} (hn : 3 ≤ n) {x : Multiset ℝ} (hx : Multiset.card x = n) :
+    (esymm x 1 / Nat.choose n 1) * (esymm x 3 / Nat.choose n 3) ≤ (esymm x 2 / Nat.choose n 2) ^ 2 :=
+  newton_ineq (i := 1) (by linarith) hx
+
+/-- Newton's inequalities on the last three elementary symmetric means. -/
+lemma newton_ineq_last {n : ℕ} (hn : 2 ≤ n) {x : Multiset ℝ} (hx : Multiset.card x = n) :
+    (esymm x (n - 2) / Nat.choose n (n - 2)) * (esymm x n / Nat.choose n n) ≤
+      (esymm x (n - 1) / Nat.choose n (n - 1)) ^ 2 := by
+  have hi : n - 2 + 2 ≤ n := by omega
+  have h2 : n - 2 + 2 = n := by omega
+  simpa [h2] using newton_ineq (i := n - 2) hi hx
+
+/-- The division-free form at `i = 0`. -/
+lemma newton_ineq'_zero {n : ℕ} {x : Multiset ℝ} (hx : Multiset.card x = n) :
+    2 * n * (esymm x 0) * (esymm x 2) ≤ 1 * (n - 1) * (esymm x 1) ^ 2 := by
+  simpa using newton_ineq' 0 n hx
+
+/-- The division-free form at the last admissible index `i = n - 2`. -/
+lemma newton_ineq'_last {n : ℕ} (hn : 2 ≤ n) {x : Multiset ℝ} (hx : Multiset.card x = n) :
+    n * 2 * esymm x (n - 2) * esymm x n ≤ (n - 1) * esymm x (n - 1) ^ 2 := by
+  have h := newton_ineq' (n - 2) n hx
+  have h2 : n - 2 + 2 = n := by omega
+  have h1 : n - 2 + 1 = n - 1 := by omega
+  have hn2 : n - (n - 2) = 2 := by omega
+  have hn1 : n - (n - 2) - 1 = 1 := by omega
+  simpa [h2, h1, hn2, hn1, mul_comm, mul_left_comm, mul_assoc] using h
+
