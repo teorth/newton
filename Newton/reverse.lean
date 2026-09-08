@@ -172,3 +172,27 @@ lemma split_of_reverse {k:Type*} [Field k] {P: k[X]} (hP: P.Splits (RingHom.id k
   rw [splits_iff_card_roots] at hP ⊢
   rw [<-P.card_roots_of_reverse, natDegree_eq_reverse_natDegree_add_natTrailingDegree] at hP
   exact Nat.add_right_cancel hP
+
+/-- Reversion vanishes if and only if the original polynomial does. -/
+lemma reverse_eq_zero_iff {R : Type*} [Semiring R] {p : R[X]} : p.reverse = 0 ↔ p = 0 :=
+  reverse_eq_zero
+
+/-- Reversion does not vanish if and only if the original polynomial does not. -/
+lemma reverse_ne_zero_iff {R : Type*} [Semiring R] {p : R[X]} : p.reverse ≠ 0 ↔ p ≠ 0 :=
+  reverse_eq_zero_iff.not
+
+/-- Reversion of a linear factor `X - t`. -/
+lemma reverse_X_sub_C {R : Type*} [Ring R] (t : R) :
+    (X - C t).reverse = 1 - C t * X := by
+  simp [reverse_sub_C, reverse_X]
+
+/-- Degree of the reverse is at most the original degree. -/
+lemma reverse_natDegree_le {R : Type*} [Semiring R] (p : R[X]) :
+    p.reverse.natDegree ≤ p.natDegree := by
+  rw [p.reverse_natDegree]
+  exact Nat.sub_le _ _
+
+/-- If there is no factor of `X`, reversion preserves degree. -/
+lemma reverse_natDegree_eq_of_natTrailingDegree_eq_zero {R : Type*} [Semiring R]
+    {p : R[X]} (hp : p.natTrailingDegree = 0) : p.reverse.natDegree = p.natDegree := by
+  rw [p.reverse_natDegree, hp, Nat.sub_zero]
