@@ -92,7 +92,7 @@ lemma reverse_dvd_of_domain {R : Type*} [CommRing R] [IsDomain R] {f g : R[X]} (
 @[simp]
 lemma reverse_pow_of_domain {R:Type*} [CommRing R] [IsDomain R] (f : R[X]) (n: ℕ) : (f^n).reverse = f.reverse^n := by
   induction' n with n hn
-  . simp only [Nat.zero_eq, pow_zero, reverse_one]
+  . simp only [pow_zero, reverse_one]
   rw [<-Nat.add_one, pow_succ, pow_succ, reverse_mul_of_domain, hn]
 
 lemma rootMultiplicity_eq_multiplicity' {R : Type u} [CommRing R] [DecidableEq R] [DecidableRel fun (x x_1 : Polynomial R) => x ∣ x_1] {p : R[X]} (a : R) (hp: p ≠ 0) : p.rootMultiplicity a = multiplicity (X - C a) p := by
