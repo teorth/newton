@@ -93,6 +93,14 @@ private lemma newton_ineq_prelim (n:ℕ) : ∀ i : ℕ, newton_hyp n i := by
   rw [add_comm 1 j, (show 2+n = n+1+1 by ring)]
   exact newton_hyp_induct ((hind (n+1) (by linarith)) j)
 
+/-- Division-free Newton inequality on polynomial coefficients for real-split polynomials.
+This is the coefficient form used internally to derive the elementary-symmetric statements. -/
+lemma newton_inequality_coeff (n i : ℕ) {P : ℝ[X]} (hdeg : P.natDegree = n)
+    (hsplit : Splits (RingHom.id ℝ) P) :
+    (i + 2) * (n - i) * (P.coeff i) * (P.coeff (i + 2)) ≤
+      (i + 1) * (n - i - 1) * (P.coeff (i + 1)) ^ 2 :=
+  newton_ineq_prelim n i P hdeg hsplit
+
 open Multiset
 
 @[simp]
