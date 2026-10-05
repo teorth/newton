@@ -131,6 +131,23 @@ lemma rootMultiplicity_of_reverse_eq {k:Type*} [Field k] (P: k[X]) {a:k} (ha: a 
     exact X_ne_zero
   exact P.rootMultiplicity_of_reverse_ge ha
 
+/-- Reversal inverts the nonzero roots, preserving their multiplicities. -/
+lemma roots_reverse {k : Type*} [Field k] [DecidableEq k] (P : k[X]) :
+    P.reverse.roots = (P.roots.filter fun a => a ≠ 0).map (fun a => a⁻¹) := by
+  classical
+  apply Multiset.ext.mpr
+  intro a
+  have hmap := Multiset.count_map_eq_count' (fun x : k => x⁻¹)
+    (P.roots.filter fun x => x ≠ 0) inv_injective a⁻¹
+  rw [inv_inv] at hmap
+  rw [hmap, count_roots]
+  by_cases ha : a = 0
+  · subst a
+    rw [inv_zero, Multiset.count_filter_of_neg (by simp)]
+    rw [← natTrailingDegree_eq_rootMultiplicity, reverse_natTrailingDegree]
+  · simp [Multiset.count_filter, ha, count_roots]
+    simpa using P.rootMultiplicity_of_reverse_eq (inv_ne_zero ha)
+
 /-- Reversion preserves the number of non-zero roots. -/
 lemma card_roots_of_reverse {k:Type*} [Field k] (P: k[X]) : Multiset.card P.reverse.roots + P.natTrailingDegree = Multiset.card P.roots := by
   by_cases h0 : P = 0
