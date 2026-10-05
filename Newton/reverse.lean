@@ -172,3 +172,12 @@ lemma split_of_reverse {k:Type*} [Field k] {P: k[X]} (hP: P.Splits (RingHom.id k
   rw [splits_iff_card_roots] at hP ⊢
   rw [<-P.card_roots_of_reverse, natDegree_eq_reverse_natDegree_add_natTrailingDegree] at hP
   exact Nat.add_right_cancel hP
+
+/-- A polynomial splits if and only if its reversal splits. -/
+lemma splits_reverse_iff {k : Type*} [Field k] (P : k[X]) :
+    P.reverse.Splits (RingHom.id k) ↔ P.Splits (RingHom.id k) := by
+  constructor
+  · intro h
+    rw [← reverse_reverse' P]
+    exact splits_mul (RingHom.id k) (split_of_reverse h) (splits_X_pow _ _)
+  · exact split_of_reverse
