@@ -44,12 +44,14 @@ private lemma newton_hyp_induct {n i:ℕ} (hn: newton_hyp n i) : newton_hyp (n+1
     apply natDegree_eq_of_le_of_coeff_ne_zero
     . convert natDegree_derivative_le P
       simp [hdeg]
-    rw [coeff_derivative, <-hdeg]
-    simp
-    intro h
-    rcases h with h | h
-    . simp [h] at hdeg; linarith
-    linarith
+    -- derivative coeff at deg - 1 is deg * leading coefficient, both nonzero over ℝ
+    rw [coeff_derivative, <-hdeg, coeff_natDegree]
+    refine mul_ne_zero ?_ (leadingCoeff_ne_zero.mpr ?_)
+    · rw [hdeg]
+      exact_mod_cast Nat.succ_ne_zero n
+    · intro hP
+      simp [hP] at hdeg
+      exact Nat.succ_ne_zero n hdeg.symm
   replace hn := hn (derivative P) hdeg hsplit
   rw [coeff_derivative, coeff_derivative, coeff_derivative] at hn
   push_cast at hn ⊢
